@@ -25,7 +25,7 @@ Fish_data <- read_csv("Fish.csv")
 
 
 Counts_fish <- Fish_data %>% 
-   mutate(uniqeid = row_number()) %>%
+   mutate(uniqeid = row_number()) %>% #spread wasnt working unless there was an  'unique' id
    spread(Fine_Trophic, Count_m2) 
 
 
@@ -34,23 +34,24 @@ Count_transposed<-t(Counts_fish)
 N.ts = nrow(Count_transposed)  # length of rows
 TT = ncol(Count_transposed) #length of columns
 
-#testing to see if id number matters
+#testing to see if 'unique' id number affects the size of the matrix
 otherid <- Fish_data %>% 
    group_by(Year, Fine_Trophic, Taxonomy, Site) %>% 
    mutate(uniqeid = row_number()) %>%
    spread(Fine_Trophic, Count_m2) 
 
-otherid<- t(otherid) #leads to same number of elements byt > Mb
+otherid<- t(otherid) 
+#leads to same number of elements but greater > Mb
 ```
 
 
-It is normal in this type of analysis to standardize each time series by first
+From the manual: 'It is normal in this type of analysis to standardize each time series by first
 subtracting its mean and then dividing by its standard deviation (i.e., create
-a z -score y⇤t with mean = 0 and standard deviation = 1)
+a z -score y⇤t with mean = 0 and standard deviation = 1)'
 ```{r}
-#Sigma = sqrt(apply(Count_transposed, 1, var, na.rm=TRUE))
-#y.bar = apply(Count_transposed, 1, mean, na.rm=TRUE)
-#dat.z = (Count_transposed - y.bar) * (1/Sigma)
-#rownames(dat.z) = rownames(Count_transposed)
+Sigma = sqrt(apply(Count_transposed, 1, var, na.rm=TRUE))
+y.bar = apply(Count_transposed, 1, mean, na.rm=TRUE)
+#dat.z = (Count_transposed - y.bar) * (1/Sigma) #this line is not working
+rownames(dat.z) = rownames(Count_transposed)
 ```
 
