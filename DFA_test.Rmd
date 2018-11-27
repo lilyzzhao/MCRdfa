@@ -1,0 +1,56 @@
+---
+title: "DFA"
+author: "Lily Zhao"
+date: "11/26/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(MARSS)
+library(xtable)
+library(tidyverse)
+library(readr)
+library(reshape2)
+Fish_data <- read_csv("Fish.csv")
+
+```
+
+```{r}
+
+# The arguments to spread():
+# - data: Data object
+# - key: Name of column containing the new column names
+# - value: Name of column containing values
+
+
+Counts_fish <- Fish_data %>% 
+   mutate(uniqeid = row_number()) %>%
+   spread(Fine_Trophic, Count_m2) 
+
+
+
+Count_transposed<-t(Counts_fish)
+N.ts = nrow(Count_transposed)  # length of rows
+TT = ncol(Count_transposed) #length of columns
+
+#testing to see if id number matters
+otherid <- Fish_data %>% 
+   group_by(Year, Fine_Trophic, Taxonomy, Site) %>% 
+   mutate(uniqeid = row_number()) %>%
+   spread(Fine_Trophic, Count_m2) 
+
+otherid<- t(otherid) #leads to same number of elements byt > Mb
+```
+
+
+It is normal in this type of analysis to standardize each time series by first
+subtracting its mean and then dividing by its standard deviation (i.e., create
+a z -score y⇤t with mean = 0 and standard deviation = 1)
+```{r}
+#Sigma = sqrt(apply(Count_transposed, 1, var, na.rm=TRUE))
+#y.bar = apply(Count_transposed, 1, mean, na.rm=TRUE)
+#dat.z = (Count_transposed - y.bar) * (1/Sigma)
+#rownames(dat.z) = rownames(Count_transposed)
+```
+
