@@ -54,4 +54,20 @@ y.bar = apply(Count_transposed, 1, mean, na.rm=TRUE)
 #dat.z = (Count_transposed - y.bar) * (1/Sigma) #this line is not working
 rownames(dat.z) = rownames(Count_transposed)
 ```
+```{r}
+#can i get it to work with a subset of the data?
+subset <- read_csv("subset_test.csv")
+subset<- subset %>% 
+   mutate(uniqeid = row_number()) %>% #spread wasnt working unless there was an  'unique' id
+   spread(Fine_Trophic, Count_m2) 
+
+subset_transposed<- t(subset) 
+
+
+Sigma = sqrt(apply(subset_transposed, 1, var, na.rm=TRUE))
+y.bar = apply(subset_transposed, 1, mean, na.rm=TRUE)
+dat.z = (subset_transposed - y.bar) * (1/Sigma) #this line is not working
+rownames(dat.z) = rownames(subset_transposed)
+
+```
 
